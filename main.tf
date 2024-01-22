@@ -1,7 +1,7 @@
 locals {
   cluster_domain          = "cluster.local"
   profile_privileged_name = "k3s-privileged-${var.env}"
-  nicparent               = "${var.env}-network"
+  nicparent               = "network-${var.env}-docker"
   container_profiles = [
     "limits",
     "fs-dir",
@@ -51,20 +51,18 @@ data "docker_image" "debian_bookworm" {
   name = "debian:bookworm"
 }
 
-
 module "container_loadbalancer_slb" {
   source = "github.com/studio-telephus/terraform-docker-haproxy.git?ref=main"
   image  = data.docker_image.debian_bookworm.id
   name   = local.containers_loadbalancer[0].name
   networks = [
     {
-      name         = "network-${var.env}-docker"
+      name         = local.nicparent
       ipv4_address = local.containers_loadbalancer[0].ipv4_address
     }
   ]
   bind_port           = local.containers_loadbalancer[0].bind_port
   servers             = local.containers_loadbalancer[0].servers
-  nicparent           = local.nicparent
   stats_auth_password = module.bw_haproxy_stats.data.password
   providers = {
     docker = docker.docker-host

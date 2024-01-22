@@ -1,12 +1,6 @@
 locals {
-  cluster_domain          = "cluster.local"
-  profile_privileged_name = "k3s-privileged-${var.env}"
-  nicparent               = "network-${var.env}-docker"
-  container_profiles = [
-    "limits",
-    "fs-dir",
-    "nw-${var.env}"
-  ]
+  cluster_domain = "cluster.local"
+  nicparent      = "network-${var.env}-docker"
   containers_server = [
     {
       name         = "container-${var.env}-k3s-s1"
@@ -27,7 +21,6 @@ locals {
     {
       name         = "container-${var.env}-k3s-slb"
       ipv4_address = local.fixed_registration_ip
-      profiles     = local.container_profiles
       bind_port    = 6443
       servers = [for item in local.containers_server : {
         address : item.ipv4_address,
@@ -37,7 +30,6 @@ locals {
     {
       name         = "container-${var.env}-k3s-alb"
       ipv4_address = local.external_ip
-      profiles     = local.container_profiles
       bind_port    = 443
       servers = [for item in local.containers_server : {
         address : item.ipv4_address,
@@ -47,22 +39,19 @@ locals {
   ]
 }
 
-data "docker_image" "debian_bookworm" {
-  name = "debian:bookworm"
-}
-
-module "container_loadbalancer_slb" {
+module "container_loadbalancers" {
+  count  = length(local.containers_loadbalancer)
   source = "github.com/studio-telephus/terraform-docker-haproxy.git?ref=main"
   image  = data.docker_image.debian_bookworm.id
-  name   = local.containers_loadbalancer[0].name
+  name   = local.containers_loadbalancer[count.index].name
   networks = [
     {
       name         = local.nicparent
-      ipv4_address = local.containers_loadbalancer[0].ipv4_address
+      ipv4_address = local.containers_loadbalancer[count.index].ipv4_address
     }
   ]
-  bind_port           = local.containers_loadbalancer[0].bind_port
-  servers             = local.containers_loadbalancer[0].servers
+  bind_port           = local.containers_loadbalancer[count.index].bind_port
+  servers             = local.containers_loadbalancer[count.index].servers
   stats_auth_password = module.bw_haproxy_stats.data.password
 }
 

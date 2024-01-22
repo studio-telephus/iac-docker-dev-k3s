@@ -58,6 +58,7 @@ module "container_loadbalancers" {
 
 module "docker_k3s_cluster" {
   source            = "github.com/studio-telephus/terraform-docker-k3s-embedded.git?ref=main"
+  image             = data.docker_image.debian_bookworm.id
   swarm_private_key = module.bw_swarm_private_key.data.notes
   cluster_domain    = local.cluster_domain
   network_name      = local.nicparent

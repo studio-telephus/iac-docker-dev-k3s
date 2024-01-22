@@ -55,30 +55,30 @@ module "container_loadbalancers" {
   stats_auth_password = module.bw_haproxy_stats.data.password
 }
 
-//
-//module "docker_k3s_cluster" {
-//  source            = "github.com/studio-telephus/terraform-lxd-k3s-embedded.git?ref=1.0.0"
-//  swarm_private_key = module.bw_swarm_private_key.data.notes
-//  cluster_domain    = local.cluster_domain
-//  nicparent         = "${var.env}-network"
-//  cidr_pods         = "10.20.10.0/22"
-//  cidr_services     = "10.20.15.0/22"
-//  k3s_install_env_vars = {
-//    "K3S_KUBECONFIG_MODE" = "644"
-//  }
-//  server_flags = [
-//    "--disable local-storage",
-//    "--tls-san ${local.fixed_registration_ip}"
-//  ]
-//  containers_server = local.containers_server
-//  autostart         = var.autostart
-//  depends_on = [
-//    module.container_loadbalancer[0]
-//  ]
-//}
-//
-//resource "local_sensitive_file" "kube_config" {
-//  content    = module.docker_k3s_cluster.k3s_kube_config
-//  filename   = var.kube_config_path
-//  depends_on = [module.docker_k3s_cluster]
-//}
+
+module "docker_k3s_cluster" {
+  source            = "github.com/studio-telephus/terraform-docker-k3s-embedded.git?ref=main"
+  swarm_private_key = module.bw_swarm_private_key.data.notes
+  cluster_domain    = local.cluster_domain
+  network_name      = local.nicparent
+  cidr_pods         = "10.20.10.0/22"
+  cidr_services     = "10.20.15.0/22"
+  k3s_install_env_vars = {
+    "K3S_KUBECONFIG_MODE" = "644"
+  }
+  server_flags = [
+    "--disable local-storage",
+    "--tls-san ${local.fixed_registration_ip}"
+  ]
+  containers_server = local.containers_server
+  restart           = "unless-stopped"
+  depends_on = [
+    module.container_loadbalancers[0]
+  ]
+}
+
+resource "local_sensitive_file" "kube_config" {
+  content    = module.docker_k3s_cluster.k3s_kube_config
+  filename   = var.kube_config_path
+  depends_on = [module.docker_k3s_cluster]
+}

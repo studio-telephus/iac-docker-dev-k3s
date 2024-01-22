@@ -64,9 +64,6 @@ module "container_loadbalancer_slb" {
   bind_port           = local.containers_loadbalancer[0].bind_port
   servers             = local.containers_loadbalancer[0].servers
   stats_auth_password = module.bw_haproxy_stats.data.password
-  providers = {
-    docker = docker.docker-host
-  }
 }
 
 //

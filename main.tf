@@ -60,7 +60,6 @@ module "k3s_cluster" {
   source          = "github.com/studio-telephus/terraform-docker-k3s-embedded.git?ref=main"
   ssh_private_key = module.bw_swarm_private_key.data.notes
   cluster_domain  = local.cluster_domain
-  network_name    = local.nicparent
   cidr_pods       = "10.20.10.0/22"
   cidr_services   = "10.20.15.0/22"
   k3s_install_env_vars = {

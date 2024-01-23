@@ -66,6 +66,13 @@ module "k3s_cluster" {
     "K3S_KUBECONFIG_MODE" = "644"
   }
   server_flags = [
+    "--write-kubeconfig-mode '0644'",
+    "--node-taint CriticalAddonsOnly=true:NoExecute",
+    "--kube-controller-manager-arg allocate-node-cidrs",
+    "--flannel-backend none",
+    "--disable-kube-proxy",
+    "--disable-network-policy",
+    "--disable traefik",
     "--disable local-storage",
     "--tls-san ${local.fixed_registration_ip}"
   ]

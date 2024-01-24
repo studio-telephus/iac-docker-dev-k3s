@@ -33,9 +33,9 @@ locals {
 }
 
 module "cluster" {
-  source = "github.com/studio-telephus/terraform-docker-k3s.git?ref=main"
-  network_name  = local.nicparent
-  cluster_name  = "k3s-${var.env}"
+  source       = "github.com/studio-telephus/terraform-docker-k3s.git?ref=main"
+  network_name = local.nicparent
+  cluster_name = "k3s-${var.env}"
   server_config = [
     "--disable", "local-storage"
   ]
@@ -94,8 +94,8 @@ module "cluster" {
 //  ]
 //}
 //
-//resource "local_sensitive_file" "kube_config" {
-//  content    = module.k3s_cluster.k3s_kube_config
-//  filename   = var.kube_config_path
-//  depends_on = [module.k3s_cluster]
-//}
+resource "local_sensitive_file" "kube_config" {
+  content    = module.cluster.kubeconfig
+  filename   = var.kube_config_path
+  depends_on = [module.cluster]
+}

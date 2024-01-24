@@ -36,6 +36,7 @@ module "cluster" {
   source       = "github.com/studio-telephus/terraform-docker-k3s.git?ref=main"
   network_name = local.nicparent
   cluster_name = "k3s-${var.env}"
+  csi_support  = true
   server_config = [
     "--disable", "local-storage"
   ]

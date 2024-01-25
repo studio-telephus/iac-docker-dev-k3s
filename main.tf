@@ -74,9 +74,8 @@ module "docker_k3s_swarm" {
     },
     {
       target = "/var/lib/rancher/k3s"
-      source = docker_volume.k3s_server.mountpoint
+      source = docker_volume.k3s_server.name
       type   = "volume"
-      name = docker_volume.k3s_server.name
     }
   ]
   volumes = [

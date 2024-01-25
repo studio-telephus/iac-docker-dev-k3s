@@ -111,7 +111,7 @@ module "k3s_cluster_embedded" {
 }
 
 resource "local_sensitive_file" "kube_config" {
-  content    = module.k3s_cluster.k3s_kube_config
+  content    = module.k3s_cluster_embedded.k3s_kube_config
   filename   = var.kube_config_path
-  depends_on = [module.k3s_cluster]
+  depends_on = [module.k3s_cluster_embedded]
 }

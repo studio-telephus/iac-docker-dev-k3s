@@ -52,6 +52,11 @@ resource "docker_volume" "k3s_longhorn" {
   name  = "volume-k3s-${var.env}-longhorn"
 }
 
+# Mimics https://github.com/rancher/k3s/blob/master/docker-compose.yml
+resource "docker_volume" "k3s_server" {
+  name = "volume-k3s-${var.env}-server"
+}
+
 module "docker_k3s_swarm" {
   source            = "github.com/studio-telephus/terraform-docker-k3s-swarm.git?ref=main"
   swarm_private_key = module.bw_swarm_private_key.data.notes
@@ -66,6 +71,11 @@ module "docker_k3s_swarm" {
       bind_options = {
         propagation = "rshared"
       }
+    },
+    {
+      target = "/var/lib/rancher/k3s"
+      source = docker_volume.k3s_server.mountpoint
+      type   = "volume"
     }
   ]
   volumes = [

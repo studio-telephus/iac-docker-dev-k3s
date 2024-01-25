@@ -22,6 +22,18 @@ List
 
     iptables -t nat -v -L -n --line-number
 
+## Docker
+
+    docker exec -it container-dev-k3s-slb /bin/bash
+    docker exec -it container-dev-k3s-s1 /bin/bash
+    docker logs --follow a622e3f76c36
+    
+    docker container stop container-dev-k3s-slb
+    docker container start container-dev-k3s-slb
+
+journalctl -fu docker.service
+
+
 ## Links
 
 - https://picluster.ricsanfre.com/docs/minio/

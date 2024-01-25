@@ -49,12 +49,12 @@ module "container_loadbalancers" {
 }
 
 resource "docker_volume" "k3s_longhorn" {
-  name  = "volume-k3s-${var.env}-longhorn"
+  name  = "volume-${var.env}-k3s-longhorn"
 }
 
 # Mimics https://github.com/rancher/k3s/blob/master/docker-compose.yml
 resource "docker_volume" "k3s_server" {
-  name = "volume-k3s-${var.env}-server"
+  name = "volume-${var.env}-k3s-server"
 }
 
 module "docker_k3s_swarm" {
@@ -76,7 +76,7 @@ module "docker_k3s_swarm" {
       target = "/var/lib/rancher/k3s"
       source = docker_volume.k3s_server.name
       type   = "volume"
-    }
+    },
     {
       target = "/var/lib/longhorn"
       source = docker_volume.k3s_longhorn.mountpoint

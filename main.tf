@@ -65,6 +65,19 @@ module "docker_k3s_swarm" {
   restart           = "unless-stopped"
   mounts = [
     {
+      target = "/run"
+      type   = "tmpfs"
+    },
+    {
+      target = "/var/run"
+      type   = "tmpfs"
+    },
+    {
+      target = "/var/lib/rancher/k3s"
+      source = docker_volume.k3s_server.name
+      type   = "volume"
+    }
+    {
       target = "/var/lib/longhorn"
       source = docker_volume.k3s_longhorn.mountpoint
       type   = "bind"

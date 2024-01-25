@@ -52,7 +52,7 @@ resource "docker_volume" "k3s_longhorn" {
   name  = "volume-k3s-${var.env}-longhorn"
 }
 
-module "k3s_swarm" {
+module "docker_k3s_swarm" {
   source            = "github.com/studio-telephus/terraform-docker-k3s-swarm.git?ref=main"
   swarm_private_key = module.bw_swarm_private_key.data.notes
   containers        = concat(local.containers_server, local.containers_worker)
@@ -76,8 +76,8 @@ module "k3s_swarm" {
   ]
 }
 
-module "k3s_cluster" {
-  source          = "github.com/studio-telephus/terraform-docker-k3s-embedded.git?ref=main"
+module "k3s_cluster_embedded" {
+  source          = "github.com/studio-telephus/terraform-k3s-cluster-embedded.git?ref=main"
   ssh_private_key = module.bw_swarm_private_key.data.notes
   cluster_domain  = local.cluster_domain
   cidr_pods       = "10.20.10.0/22"
@@ -92,7 +92,7 @@ module "k3s_cluster" {
   containers_server = local.containers_server
   containers_worker = local.containers_worker
   depends_on = [
-    module.k3s_swarm,
+    module.docker_k3s_swarm,
     module.container_loadbalancers[0]
   ]
 }

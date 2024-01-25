@@ -37,7 +37,7 @@ module "container_loadbalancers" {
   source = "github.com/studio-telephus/terraform-docker-haproxy.git?ref=main"
   image  = data.docker_image.debian_bookworm.id
   name   = local.containers_loadbalancer[count.index].name
-  networks = [
+  networks_advanced = [
     {
       name         = local.nicparent
       ipv4_address = local.containers_loadbalancer[count.index].ipv4_address

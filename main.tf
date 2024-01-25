@@ -76,9 +76,6 @@ module "docker_k3s_swarm" {
       target = "/var/lib/rancher/k3s"
       source = docker_volume.k3s_server.mountpoint
       type   = "volume"
-      bind_options = {
-        propagation = "rprivate"
-      }
     }
   ]
   volumes = [

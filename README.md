@@ -28,8 +28,8 @@ List
     docker exec -it container-dev-k3s-s1 /bin/bash
     docker logs --follow a622e3f76c36
     
-    docker container stop container-dev-k3s-slb
-    docker container start container-dev-k3s-slb
+    docker container stop container-dev-k3s-s1
+    docker container delete container-dev-k3s-s1
 
 journalctl -fu docker.service
 

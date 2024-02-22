@@ -49,7 +49,7 @@ module "container_loadbalancers" {
 }
 
 resource "docker_volume" "k3s_longhorn" {
-  name  = "volume-${var.env}-k3s-longhorn"
+  name = "volume-${var.env}-k3s-longhorn"
 }
 
 # Mimics https://github.com/rancher/k3s/blob/master/docker-compose.yml

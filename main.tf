@@ -84,11 +84,6 @@ module "docker_k3s_swarm" {
       bind_options = {
         propagation = "rshared"
       }
-    },
-    {
-      target = "/var/lib/rancher/k3s"
-      source = docker_volume.k3s_server.name
-      type   = "volume"
     }
   ]
   volumes = [
@@ -96,6 +91,10 @@ module "docker_k3s_swarm" {
       container_path = "/sys/fs/cgroup"
       host_path      = "/sys/fs/cgroup"
     }
+  ]
+  depends_on = [
+    docker_volume.k3s_server,
+    docker_volume.k3s_longhorn
   ]
 }
 
@@ -121,7 +120,32 @@ module "k3s_cluster_embedded" {
 }
 
 resource "local_sensitive_file" "kube_config" {
-  content    = module.k3s_cluster_embedded.k3s_kube_config
+  content    = module.k3s_cluster_embedded.k3s_kubernetes
   filename   = var.kube_config_path
   depends_on = [module.k3s_cluster_embedded]
+}
+
+resource "bitwarden_item_secure_note" "k3s_credentials" {
+  name     = "platform_k3s_${var.env}_root_credentials"
+
+  field {
+    name = "host_int"
+    text = "https://${local.fixed_registration_ip}:6443"
+  }
+  field {
+    name = "host_ext"
+    text = "https://telephus.k-space.ee:49632"
+  }
+  field {
+    name = "client_certificate"
+    text = module.k3s_cluster_embedded.k3s_kubernetes.client_certificate
+  }
+  field {
+    name = "client_key"
+    text = module.k3s_cluster_embedded.k3s_kubernetes.client_key
+  }
+  field {
+    name = "cluster_ca_certificate"
+    text = module.k3s_cluster_embedded.k3s_kubernetes.cluster_ca_certificate
+  }
 }

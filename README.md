@@ -33,8 +33,10 @@ List
 ## Status
 
     docker exec -it container-dev-k3s-s1 /bin/bash
-    k3s kubectl get pods --all-namespaces
+    k3s kubectl get nodes,pods,services -A -o wide
     kubectl -n kube-system describe pod coredns-6799fbcd5-dr5f9
+
+    cat /var/lib/rancher/k3s/agent/containerd/containerd.log
 
 Helpers
 

@@ -88,8 +88,13 @@ module "docker_k3s_swarm" {
   ]
   volumes = [
     {
-      container_path = "/sys/fs/cgroup"
-      host_path      = "/sys/fs/cgroup"
+      container_path = "/sys"
+      host_path      = "/sys"
+      read_only      = false
+    },
+    {
+      container_path = "/proc"
+      host_path      = "/proc"
       read_only      = false
     },
     {

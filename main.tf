@@ -95,7 +95,7 @@ module "docker_k3s_swarm" {
     {
       container_path = "/lib/modules"
       host_path      = "/lib/modules"
-      read_only      = false
+      read_only      = true
     }
   ]
   depends_on = [

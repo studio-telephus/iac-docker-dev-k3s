@@ -2,15 +2,15 @@
 
 DEV cluster
 
-## Move Kubernetes config file to Gitlab runner
+## Copy Kubernetes config file to Gitlab runner
 
-    lxc exec container-adm-glrunner-k1 -- bash -c 'mkdir -p /home/gitlab-runner/.kube'
-    lxc file push .terraform/kube_config.yml container-adm-glrunner-k1/home/gitlab-runner/.kube/config
-    lxc exec container-adm-glrunner-k1 -- bash -c 'chown gitlab-runner: /home/gitlab-runner/.kube'
+    docker exec container-dev-glrunner-k1 /bin/bash -xe -c 'mkdir -p /home/gitlab-runner/.kube'
+    cp .terraform/kube_config.yml /var/lib/docker/volumes/volume-dev-glrunner-k1-home/_data/.kube/config
+    docker exec container-dev-glrunner-k1 /bin/bash -xe -c 'chown -R gitlab-runner: /home/gitlab-runner/.kube'
     
 Then
     
-    lxc exec container-adm-glrunner-k1 -- /bin/bash
+    docker exec -it container-dev-glrunner-k1 /bin/bash
     su - gitlab-runner
     kubectl get pods --all-namespaces
 
@@ -26,12 +26,14 @@ List
 
     docker exec -it container-dev-k3s-slb /bin/bash
     docker exec -it container-dev-k3s-s1 /bin/bash
-    docker logs --follow a622e3f76c36
+    docker logs --follow container-dev-k3s-s1
     
     docker container stop container-dev-k3s-s1
     docker container delete container-dev-k3s-s1
 
-journalctl -fu docker.service
+Helpers
+
+    journalctl -fu docker.service
 
 
 ## Links

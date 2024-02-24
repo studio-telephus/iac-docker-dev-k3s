@@ -9,42 +9,42 @@ locals {
   ]
   containers_worker     = []
   fixed_registration_ip = "10.20.0.31"
-  external_ip           = "10.20.0.32"
-  containers_loadbalancer = [
-    {
-      name         = "container-${var.env}-k3s-slb"
-      ipv4_address = local.fixed_registration_ip
-      bind_port    = 6443
-      servers = [for item in local.containers_server : {
-        address : item.ipv4_address,
-        port : 6443
-      }]
-    },
-    {
-      name         = "container-${var.env}-k3s-alb"
-      ipv4_address = local.external_ip
-      bind_port    = 443
-      servers = [for item in local.containers_server : {
-        address : item.ipv4_address,
-        port : 443
-      }]
-    }
-  ]
+  workload_ip           = "10.20.0.32"
 }
 
-module "container_loadbalancers" {
-  count  = length(local.containers_loadbalancer)
+module "container_loadbalancer_slb" {
   source = "github.com/studio-telephus/terraform-docker-haproxy.git?ref=main"
   image  = data.docker_image.debian_bookworm.id
-  name   = local.containers_loadbalancer[count.index].name
+  name   = "container-${var.env}-k3s-slb"
   networks_advanced = [
     {
       name         = local.nicparent
-      ipv4_address = local.containers_loadbalancer[count.index].ipv4_address
+      ipv4_address = local.fixed_registration_ip
     }
   ]
-  bind_port           = local.containers_loadbalancer[count.index].bind_port
-  servers             = local.containers_loadbalancer[count.index].servers
+  bind_port           = 6443
+  servers             = [for item in local.containers_server : {
+    address : item.ipv4_address,
+    port : 6443
+  }]
+  stats_auth_password = module.bw_haproxy_stats.data.password
+}
+
+module "container_loadbalancer_alb" {
+  source = "github.com/studio-telephus/terraform-docker-haproxy.git?ref=main"
+  image  = data.docker_image.debian_bookworm.id
+  name   = "container-${var.env}-k3s-alb"
+  networks_advanced = [
+    {
+      name         = local.nicparent
+      ipv4_address = local.workload_ip
+    }
+  ]
+  bind_port           = 443
+  servers             = [for item in local.containers_server : {
+    address : item.ipv4_address,
+    port : 443
+  }]
   stats_auth_password = module.bw_haproxy_stats.data.password
 }
 
@@ -115,7 +115,7 @@ module "k3s_cluster_embedded" {
   containers_worker = local.containers_worker
   depends_on = [
     module.docker_k3s_swarm,
-    module.container_loadbalancers[0]
+    module.container_loadbalancer_slb
   ]
 }
 

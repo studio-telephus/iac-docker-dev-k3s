@@ -24,17 +24,40 @@ List
 
 ## Docker
 
-    docker exec -it container-dev-k3s-slb /bin/bash
-    docker exec -it container-dev-k3s-s1 /bin/bash
+    docker exec -it container-dev-k3s-slb /bin/bash    
     docker logs --follow container-dev-k3s-s1
     
     docker container stop container-dev-k3s-s1
     docker container delete container-dev-k3s-s1
 
+## Status
+
+    docker exec -it container-dev-k3s-s1 /bin/bash
+    k3s kubectl get pods --all-namespaces
+    kubectl -n kube-system describe pod coredns-6799fbcd5-dr5f9
+
 Helpers
 
     journalctl -fu docker.service
 
+
+## Manual teardown
+
+    docker stop container-dev-k3s-alb
+    docker stop container-dev-k3s-slb
+    docker stop container-dev-k3s-s1
+
+    docker remove container-dev-k3s-alb
+    docker remove container-dev-k3s-slb
+    docker remove container-dev-k3s-s1
+
+    docker volume remove volume-dev-k3s-longhorn
+    docker volume remove volume-dev-k3s-server
+
+# Fix   
+
+    docker volume create volume-dev-k3s-longhorn
+    docker volume create volume-dev-k3s-server
 
 ## Links
 

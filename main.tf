@@ -108,7 +108,7 @@ module "k3s_cluster_embedded" {
     "K3S_KUBECONFIG_MODE" = "644"
   }
   server_flags = [
-    "--disable local-storage",
+    # "--disable local-storage",
     "--tls-san ${local.fixed_registration_ip}"
   ]
   containers_server = local.containers_server

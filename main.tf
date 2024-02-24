@@ -1,6 +1,6 @@
 locals {
   cluster_domain = "cluster.local"
-  nicparent      = "network-${var.env}-docker"
+  nicparent      = "${var.env}-docker"
   containers_server = [
     {
       name         = "container-${var.env}-k3s-s1"

@@ -137,14 +137,14 @@ resource "bitwarden_item_secure_note" "k3s_credentials" {
   }
   field {
     name = "client_certificate"
-    text = module.k3s_cluster_embedded.k3s_kubernetes.client_certificate
+    text = base64encode(module.k3s_cluster_embedded.k3s_kubernetes.client_certificate)
   }
   field {
     name = "client_key"
-    text = module.k3s_cluster_embedded.k3s_kubernetes.client_key
+    text = base64encode(module.k3s_cluster_embedded.k3s_kubernetes.client_key)
   }
   field {
     name = "cluster_ca_certificate"
-    text = module.k3s_cluster_embedded.k3s_kubernetes.cluster_ca_certificate
+    text = base64encode(module.k3s_cluster_embedded.k3s_kubernetes.cluster_ca_certificate)
   }
 }

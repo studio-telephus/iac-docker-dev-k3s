@@ -90,7 +90,7 @@ module "docker_k3s_swarm" {
     {
       container_path = "/sys/fs/cgroup"
       host_path      = "/sys/fs/cgroup"
-      read_only      = true
+      read_only      = false
     },
     {
       container_path = "/lib/modules"

@@ -120,14 +120,13 @@ module "k3s_cluster_embedded" {
 }
 
 resource "local_sensitive_file" "kube_config" {
-  content    = module.k3s_cluster_embedded.k3s_kubernetes
+  content    = module.k3s_cluster_embedded.k3s_kube_config
   filename   = var.kube_config_path
   depends_on = [module.k3s_cluster_embedded]
 }
 
 resource "bitwarden_item_secure_note" "k3s_credentials" {
-  name     = "platform_k3s_${var.env}_root_credentials"
-
+  name = "platform_k3s_${var.env}_root_credentials"
   field {
     name = "host_int"
     text = "https://${local.fixed_registration_ip}:6443"

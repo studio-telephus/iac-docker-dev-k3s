@@ -86,12 +86,18 @@ module "docker_k3s_swarm" {
       }
     }
   ]
-//  volumes = [
-//    {
-//      container_path = "/sys/fs/cgroup"
-//      host_path      = "/sys/fs/cgroup"
-//    }
-//  ]
+  volumes = [
+    {
+      container_path = "/sys/fs/cgroup"
+      host_path      = "/sys/fs/cgroup"
+      read_only      = "true"
+    },
+    {
+      container_path = "/lib/modules"
+      host_path      = "/lib/modules"
+      read_only      = "true"
+    }
+  ]
   depends_on = [
     docker_volume.k3s_server,
     docker_volume.k3s_longhorn
